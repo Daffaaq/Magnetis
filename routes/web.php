@@ -5,9 +5,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\InternBatcheController;
 use App\Http\Controllers\InternLocationController;
+use App\Http\Controllers\InternMentorController;
 use App\Http\Controllers\InternPositionBatcheController;
 use App\Http\Controllers\InternPositionController;
 use App\Http\Controllers\InternSelectionStepController;
+use App\Http\Controllers\MentorBatchAssignmentController;
 use App\Http\Controllers\Menu\MenuGroupController;
 use App\Http\Controllers\Menu\MenuItemController;
 use App\Http\Controllers\RegionController;
@@ -92,6 +94,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('user-management')->group(function () {
         Route::resource('user', UserController::class);
         Route::post('/user/list', [UserController::class, 'list'])->name('user.list');
+
+        //mentor
+        Route::resource('mentor', InternMentorController::class);
+        Route::post('/mentor/list', [InternMentorController::class, 'list'])->name('mentor.list');
+        Route::get('/mentor/{id}/assign-batch', [MentorBatchAssignmentController::class, 'index'])->name('mentor.batch.assignment.index');
+        Route::post('/mentor/{id}/assign-batch/list', [MentorBatchAssignmentController::class, 'list'])->name('mentor.batch.assignment.list');
+        Route::get('/mentor/{id}/assign-batch/create', [MentorBatchAssignmentController::class, 'create'])->name('mentor.batch.assignment.create');
+        Route::post('/mentor/{id}/assign-batch/store', [MentorBatchAssignmentController::class, 'store'])->name('mentor.batch.assignment.store');
+        Route::get('/mentor/assign-batch/{internBatch}/show', [MentorBatchAssignmentController::class, 'show'])->name('mentor.batch.assignment.show');
+        Route::get('/mentor/{id}/assign-batch/{internBatch}/edit', [MentorBatchAssignmentController::class, 'edit'])->name('mentor.batch.assignment.edit');
+        Route::put('/mentor/{id}/assign-batch/{internBatch}', [MentorBatchAssignmentController::class, 'update'])->name('mentor.batch.assignment.update');
+        Route::delete('/mentor/{id}/assign-batch/{internBatch}', [MentorBatchAssignmentController::class, 'destroy'])->name('mentor.batch.assignment.destroy');
     });
     Route::prefix('category-management')->group(function () {
         Route::resource('category', CategoryController::class);

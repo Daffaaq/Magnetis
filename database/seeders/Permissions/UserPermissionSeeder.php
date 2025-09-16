@@ -20,5 +20,19 @@ class UserPermissionSeeder extends Seeder
         Permission::create(['name' => 'user.destroy']);
         Permission::create(['name' => 'user.import']);
         Permission::create(['name' => 'user.export']);
+
+        //mentor
+        Permission::create(['name' => 'mentor.index']);
+        Permission::create(['name' => 'mentor.create']);
+        Permission::create(['name' => 'mentor.show']);
+        Permission::create(['name' => 'mentor.edit']);
+        Permission::create(['name' => 'mentor.destroy']);
+        Permission::create(['name' => 'mentor.import']);
+        Permission::create(['name' => 'mentor.export']);
+        Permission::create(['name' => 'mentor.batch.assignment.index']);
+        Permission::create(['name' => 'mentor.batch.assignment.create']);
+        Permission::create(['name' => 'mentor.batch.assignment.show']);
+        Permission::create(['name' => 'mentor.batch.assignment.edit']);
+        Permission::create(['name' => 'mentor.batch.assignment.destroy']);
     }
 }

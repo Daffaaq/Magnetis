@@ -17,11 +17,19 @@ class UserItemSeeder extends Seeder
         $group = MenuGroup::where('name', 'Users Management')->first();
 
         if ($group) {
-            MenuItem::create([
-                'name' => 'User List',
-                'route' => 'user-management/user',
-                'permission_name' => 'user.index',
-                'menu_group_id' => $group->id,
+            MenuItem::insert([
+                [
+                    'name' => 'Mentor List',
+                    'route' => 'user-management/mentor',
+                    'permission_name' => 'mentor.index',
+                    'menu_group_id' => $group->id,
+                ],
+                [
+                    'name' => 'User List',
+                    'route' => 'user-management/user',
+                    'permission_name' => 'user.index',
+                    'menu_group_id' => $group->id,
+                ]
             ]);
         }
     }
