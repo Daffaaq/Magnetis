@@ -178,14 +178,16 @@
                     <!-- Compensation Amount -->
                     <div class="form-group">
                         <label for="compensation_amount_intern_position_batches">Compensation Amount (if Paid):</label>
-                        <input type="number" name="compensation_amount_intern_position_batches"
-                            id="compensation_amount_intern_position_batches" step="0.01"
+                        <input type="text" name="compensation_amount_intern_position_batches"
+                            id="compensation_amount_intern_position_batches"
                             class="form-control @error('compensation_amount_intern_position_batches') is-invalid @enderror"
-                            value="{{ old('compensation_amount_intern_position_batches') }}" placeholder="e.g. 1500000">
+                            value="{{ old('compensation_amount_intern_position_batches') }}"
+                            placeholder="e.g. Rp 1.500.000">
                         @error('compensation_amount_intern_position_batches')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
 
                     <!-- Compensation Description -->
                     <div class="form-group">
@@ -296,6 +298,35 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.js"></script>
+    <script>
+        function formatRupiah(angka, prefix) {
+            let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
+        }
+
+        $(document).ready(function() {
+            $('#compensation_amount_intern_position_batches').on('input', function(e) {
+                let input = $(this).val();
+                $(this).val(formatRupiah(input, 'Rp '));
+            });
+        });
+        $('form').on('submit', function() {
+            let rupiahVal = $('#compensation_amount_intern_position_batches').val();
+            let numericVal = rupiahVal.replace(/[^0-9]/g, '');
+            $('#compensation_amount_intern_position_batches').val(numericVal);
+        });
+    </script>
     <script>
         $(document).ready(function() {
             const maxChar = 10000;

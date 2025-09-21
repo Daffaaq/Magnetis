@@ -10,6 +10,7 @@ use App\Http\Controllers\InternPositionBatcheController;
 use App\Http\Controllers\InternPositionController;
 use App\Http\Controllers\InternSelectionStepController;
 use App\Http\Controllers\MentorBatchAssignmentController;
+use App\Http\Controllers\MentorScheduleSlotController;
 use App\Http\Controllers\Menu\MenuGroupController;
 use App\Http\Controllers\Menu\MenuItemController;
 use App\Http\Controllers\RegionController;
@@ -106,6 +107,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/mentor/{id}/assign-batch/{internBatch}/edit', [MentorBatchAssignmentController::class, 'edit'])->name('mentor.batch.assignment.edit');
         Route::put('/mentor/{id}/assign-batch/{internBatch}', [MentorBatchAssignmentController::class, 'update'])->name('mentor.batch.assignment.update');
         Route::delete('/mentor/{id}/assign-batch/{internBatch}', [MentorBatchAssignmentController::class, 'destroy'])->name('mentor.batch.assignment.destroy');
+        Route::get('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty', [MentorScheduleSlotController::class, 'index'])->name('mentor.batch.assignment.slot-empty.index');
+        Route::post('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty/list', [MentorScheduleSlotController::class, 'list'])->name('mentor.batch.assignment.slot-empty.list');
+        Route::get('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty/create', [MentorScheduleSlotController::class, 'create'])->name('mentor.batch.assignment.slot-empty.create');
+        Route::get('/mentor/assignment/{assignmentId}/steps', [MentorScheduleSlotController::class, 'getStepSelection'])->name('mentor.assignment.selection-steps');
+        Route::post('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty/store', [MentorScheduleSlotController::class, 'store'])->name('mentor.batch.assignment.slot-empty.store');
+        Route::get('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty/{scheduleSlot}/edit', [MentorScheduleSlotController::class, 'edit'])->name('mentor.batch.assignment.slot-empty.edit');
+        Route::put('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty/{scheduleSlot}', [MentorScheduleSlotController::class, 'update'])->name('mentor.batch.assignment.slot-empty.update');
+        Route::delete('/mentor/{id}/assign-batch/{internBatch}/add-slot-empty/{scheduleSlot}', [MentorScheduleSlotController::class, 'destroy'])->name('mentor.batch.assignment.slot-empty.destroy');
     });
     Route::prefix('category-management')->group(function () {
         Route::resource('category', CategoryController::class);

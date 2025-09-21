@@ -4,13 +4,19 @@
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Mentor Batch Assignments</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Mentor Empty Schedule Slots</h6>
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item">
                         <a href="{{ route('mentor.index') }}">Mentor Management</a>
                     </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('mentor.batch.assignment.index', $mentor->id) }}">Assigned Batches</a>
+                    </li>
                     <li class="breadcrumb-item active">
-                        Assigned Batches
+                        <a href="{{ route('mentor.batch.assignment.slot-empty.index', [$mentor->id, $assignment->id]) }}"
+                            class="{{ request()->routeIs('mentor.batch.assignment.slot-empty.index') ? 'active' : '' }}">
+                            Schedule Slots Management
+                        </a>
                     </li>
                 </ol>
             </div>
@@ -18,56 +24,92 @@
             <div class="card-body">
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="font-weight-bold text-dark mb-0">Mentor Details</h5>
+                        <h5 class="font-weight-bold text-dark mb-0">Mentor Info</h5>
                         <button class="btn btn-link p-0 text-decoration-none text-primary" id="toggleMentorDetails"
                             title="Show/Hide Mentor Details">
                             <i class="bi bi-eye-slash" id="mentorDetailsIcon"></i>
                         </button>
                     </div>
                     <div id="mentorDetailsContent">
-                        <table class="table table-borderless table-sm w-50 mt-2">
+                        <table class="table table-sm table-borderless w-50 mt-2">
                             <tr>
-                                <th class="text-muted" style="width: 150px;">Name</th>
-                                <td class="mentor-data blurred">{{ $mentors->name_intern_mentors ?? '-' }}</td>
+                                <th>Name</th>
+                                <td class="mentor-data blurred">{{ $mentor->name_intern_mentors ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th class="text-muted">Email</th>
-                                <td class="mentor-data blurred">{{ $mentors->email_intern_mentors ?? '-' }}</td>
+                                <th>Email</th>
+                                <td class="mentor-data blurred">{{ $mentor->email_intern_mentors ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th class="text-muted">Phone</th>
-                                <td class="mentor-data blurred">{{ $mentors->phone_intern_mentors ?? '-' }}</td>
+                                <th>Phone</th>
+                                <td class="mentor-data blurred">{{ $mentor->phone_intern_mentors ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Department</th>
+                                <td class="mentor-data blurred">{{ $mentor->department->name_departments ?? '-' }}</td>
                             </tr>
                         </table>
                     </div>
+                </div>
 
+                <div class="mb-4">
+                    <h5 class="font-weight-bold text-dark mb-2">Assigned Batch Info</h5>
+                    <table class="table table-sm table-borderless w-50">
+                        <tr>
+                            <th>Position</th>
+                            <td class="mentor-data blurred">
+                                {{ $assignment->internPositionBatch->internPosition->name_intern_positions ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Department</th>
+                            <td class="mentor-data blurred">
+                                {{ $assignment->internPositionBatch->internPosition->department->name_departments ?? '-' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Batch</th>
+                            <td class="mentor-data blurred">
+                                {{ $assignment->internPositionBatch->internBatch->name_intern_batches ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td class="mentor-data blurred">
+                                @if ($assignment->status_mentor_batch_assignments === 'active')
+                                    <span class="badge badge-success">Active</span>
+                                @else
+                                    <span
+                                        class="badge badge-secondary">{{ ucfirst($assignment->status_mentor_batch_assignments) }}</span>
+                                @endif
+                            </td>
+                        </tr>
+                    </table>
                 </div>
+
                 <div class="d-flex justify-content-end mb-3">
-                    @can('mentor.batch.assignment.create')
-                        <a href="{{ route('mentor.batch.assignment.create', $mentors->id) }}"
-                            class="btn btn-sm btn-primary shadow-sm">
-                            <i class="fas fa-plus fa-sm text-white-50"></i> Assign New Batch
-                        </a>
-                    @endcan
+                    <a href="{{ route('mentor.batch.assignment.slot-empty.create', [$mentor->id, $assignment->id]) }}"
+                        class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Tambah Slot
+                    </a>
                 </div>
+
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="MentorBatchAssignmentTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered" id="MentorScheduleSlotTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Lokasi Intern </th>
-                                <th>Assigned Batch</th>
-                                <th>Assignment Status</th>
+                                <th>Selection Step</th>
+                                <th>Tanggal Kosong</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>status Schedule Slot</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- DataTables will populate this -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                     <div class="d-flex justify-content-end mt-3">
-                        <a href="{{ route('mentor.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('mentor.batch.assignment.index', $mentor->id) }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Back
                         </a>
                     </div>
@@ -94,9 +136,14 @@
             text-decoration: none;
         }
 
-        .breadcrumb-item.active {
+        .breadcrumb-item a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item a.active {
             font-weight: bold;
             color: #007bff;
+            pointer-events: none;
         }
 
         .blurred {
@@ -106,8 +153,6 @@
 
         .blurred-unlocked {
             filter: none;
-            pointer-events: auto;
-            user-select: auto;
         }
 
         .btn.icon {
@@ -123,6 +168,7 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Toggle blur on mentor details
             $('#toggleMentorDetails').on('click', function() {
                 const dataFields = $('.mentor-data');
                 const icon = $('#mentorDetailsIcon');
@@ -137,17 +183,15 @@
             });
         });
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         $(document).ready(function() {
-            $('#MentorBatchAssignmentTable').DataTable({
+            $('#MentorScheduleSlotTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('mentor.batch.assignment.list', $mentors->id) }}",
+                    url: "{{ route('mentor.batch.assignment.slot-empty.list', [$mentor->id, $assignment->id]) }}",
                     type: 'POST',
-                    dataType: 'json',
                     data: {
                         _token: '{{ csrf_token() }}'
                     }
@@ -159,23 +203,32 @@
                         searchable: false
                     },
                     {
-                        data: 'intern_location_name',
-                        name: 'intern_location_name'
+                        data: 'name_selection_steps',
+                        name: 'intern_selection_steps.name_selection_steps'
                     },
                     {
-                        data: 'intern_position_batch',
-                        name: 'intern_position_batch'
+                        data: 'date_mentor_schedule_slots',
+                        name: 'mentor_schedule_slots.date_mentor_schedule_slots'
                     },
                     {
-                        data: 'status_mentor_batch_assignments',
-                        name: 'status_mentor_batch_assignments',
+                        data: 'start_time_mentor_schedule_slots',
+                        name: 'mentor_schedule_slots.start_time_mentor_schedule_slots'
+                    },
+                    {
+                        data: 'end_time_mentor_schedule_slots',
+                        name: 'mentor_schedule_slots.end_time_mentor_schedule_slots'
+                    },
+                    {
+                        data: 'is_booked_mentor_schedule_slots',
+                        name: 'mentor_schedule_slots.is_booked_mentor_schedule_slots',
                         render: function(data) {
-                            if (data === 'active') {
-                                return `<span class="badge badge-success">${data}</span>`;
+                            if (data === 1) {
+                                return `<span class="badge badge-success">Booked</span>`;
                             } else {
-                                return `<span class="badge badge-secondary">${data}</span>`;
+                                return `<span class="badge badge-secondary">Available</span>`;
                             }
                         }
+
                     },
                     {
                         data: 'id',
@@ -184,12 +237,10 @@
                         searchable: false,
                         render: function(data) {
                             let editUrl =
-                                `/user-management/mentor/{{ $mentors->id }}/assign-batch/${data}/edit`;
+                                `/user-management/mentor/{{ $mentor->id }}/assign-batch/{{ $assignment->id }}/add-slot-empty/${data}/edit`;
                             let showUrl = `/user-management/mentor/assign-batch/${data}/show`;
-                            let addSlotEmptyUrl =
-                                `/user-management/mentor/{{ $mentors->id }}/assign-batch/${data}/add-slot-empty`;
                             let deleteUrl =
-                                `/user-management/mentor/{{ $mentors->id }}/assign-batch/${data}`;
+                                `/user-management/mentor/{{ $mentor->id }}/assign-batch/{{ $assignment->id }}/add-slot-empty/${data}`;
                             let buttons = '';
 
                             @can('mentor.batch.assignment.edit')
@@ -198,15 +249,9 @@
                     </a>`;
                             @endcan
 
-                            buttons += `<a href="${addSlotEmptyUrl}" class="btn icon btn-sm btn-info" title="add schedule slot">
-                        <i class="bi bi-calendar-plus"></i>
-                    </a>`;
-
-                            @can('mentor.batch.assignment.show')
-                                buttons += `<a href="${showUrl}" class="btn icon btn-sm btn-info" title="Show">
+                            buttons += `<a href="${showUrl}" class="btn icon btn-sm btn-info" title="Show">
                         <i class="bi bi-eye"></i>
                     </a>`;
-                            @endcan
 
                             @can('mentor.batch.assignment.destroy')
                                 buttons += `<button class="btn icon btn-sm btn-danger" onclick="confirmDelete('${deleteUrl}')" title="Delete">
@@ -216,8 +261,7 @@
 
                             return buttons;
                         }
-
-                    }
+                    },
                 ],
                 autoWidth: false,
                 drawCallback: function(settings) {
@@ -268,7 +312,7 @@
                                     timer: 3000,
                                     timerProgressBar: true,
                                 });
-                                $('#MentorBatchAssignmentTable').DataTable().ajax.reload();
+                                $('#MentorScheduleSlotTable').DataTable().ajax.reload();
                             } else {
                                 Swal.fire({
                                     icon: 'error',

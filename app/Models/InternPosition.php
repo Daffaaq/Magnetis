@@ -22,4 +22,9 @@ class InternPosition extends Model
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function internSelectionSteps()
+    {
+        return $this->hasMany(InternSelectionStep::class);
+    }
 }

@@ -51,4 +51,9 @@ class InternPositionBatche extends Model
     {
         return $this->hasMany(InternSelectionStep::class, 'intern_position_batch_id');
     }
+
+    public function internSelectionSteps()
+    {
+        return $this->internPosition->internSelectionSteps();
+    }
 }
