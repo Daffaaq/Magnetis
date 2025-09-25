@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('intern_batch_id')->references('id')->on('intern_batches')->onDelete('cascade');
             $table->unsignedBigInteger('intern_location_id')->index();
             $table->foreign('intern_location_id')->references('id')->on('intern_locations')->onDelete('cascade');
+            $table->string('slug_intern_position_batches')->unique();
             $table->integer('quota_intern_position_batches');
             $table->enum('status_intern_position_batches', ['active', 'inactive'])->default('active');
             $table->date('start_date_intern_position_batches');

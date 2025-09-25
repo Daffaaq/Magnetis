@@ -24,6 +24,11 @@ class RoleSeeder extends Seeder
 
         $roleMentor = Role::create(['name' => 'mentor']);
 
+        $roleCandidateIntern = Role::create(['name' => 'candidate-intern']);
+
+        $roleIntern = Role::create(['name' => 'intern']);
+
+
         $roleAdmin = Role::create(['name' => 'super-admin']);
         $roleAdmin->givePermissionTo(Permission::all());
 

@@ -1,0 +1,7 @@
+#scrollToTopBtn {
+    transition: opacity 0.3s ease;
+}
+#scrollToTopBtn.hidden {
+    opacity: 0;
+    pointer-events: none;
+}

@@ -9,11 +9,13 @@ use App\Http\Controllers\InternMentorController;
 use App\Http\Controllers\InternPositionBatcheController;
 use App\Http\Controllers\InternPositionController;
 use App\Http\Controllers\InternSelectionStepController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MentorBatchAssignmentController;
 use App\Http\Controllers\MentorScheduleSlotController;
 use App\Http\Controllers\Menu\MenuGroupController;
 use App\Http\Controllers\Menu\MenuItemController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\RegistersInternshipController;
 use App\Http\Controllers\RoleAndPermission\AssignPermissionController;
 use App\Http\Controllers\RoleAndPermission\AssignUserToRoleController;
 use App\Http\Controllers\RoleAndPermission\PermissionController;
@@ -36,14 +38,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
+Route::get('/', [LandingPageController::class, 'index'])->name('landing-page');
+Route::get('/internship/backend-developer', function () {
+    return view('detail-internship');
 });
+Route::get('/internship-batch/{slug}', [LandingPageController::class, 'detailBatchInternship'])->name('detail-batch-internship');
+
+Route::get('/sertifikat', function () {
+    return view('sertifikat');
+});
+
 Route::get('/register/thanks', function () {
     return view('auth.thanks');
 })->name('register.thanks');
 
-
+Route::post('/register/candidate-intern', [RegistersInternshipController::class, 'register'])->name('register.candidate-intern');
 
 // Override route login POST Fortify, pakai middleware custom
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -53,10 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
         return view('home');
     });
 
-    // Pakai {name} bukan {id}
-    Route::get('/get-regencies/{province_name}', [RegionController::class, 'getRegencies'])->name('region.regencies');
-    Route::get('/get-districts/{regency_name}', [RegionController::class, 'getDistricts'])->name('region.districts');
-    Route::get('/get-villages/{district_name}', [RegionController::class, 'getVillages'])->name('region.villages');
+    
 
 
     Route::prefix('master-management')->group(function () {
@@ -164,3 +170,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/log-activity/list', [ActivityLogController::class, 'list'])->name('log-activity.list');
     });
 });
+
+// Pakai {name} bukan {id}
+Route::get('/get-regencies/{province_name}', [RegionController::class, 'getRegencies'])->name('region.regencies');
+Route::get('/get-districts/{regency_name}', [RegionController::class, 'getDistricts'])->name('region.districts');
+Route::get('/get-villages/{district_name}', [RegionController::class, 'getVillages'])->name('region.villages');

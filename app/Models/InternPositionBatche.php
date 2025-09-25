@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class InternPositionBatche extends Model
 {
@@ -16,6 +17,7 @@ class InternPositionBatche extends Model
         'intern_batch_id',
         'intern_location_id',
         'quota_intern_position_batches',
+        'slug_intern_position_batches',
         'status_intern_position_batches',
         'start_date_intern_position_batches',
         'end_date_intern_position_batches',
@@ -55,5 +57,19 @@ class InternPositionBatche extends Model
     public function internSelectionSteps()
     {
         return $this->internPosition->internSelectionSteps();
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->slug_intern_position_batches)) {
+                $positionName = optional($model->internPosition)->name_intern_position ?? 'posisi';
+                $batchName = optional($model->internBatch)->name_intern_batches ?? 'batch';
+                $slugBase = $positionName . ' ' . $batchName;
+                $model->slug_intern_position_batches = Str::slug($slugBase);
+            }
+        });
     }
 }

@@ -1,0 +1,14 @@
+#stepTabs {
+  position: relative;
+}
+
+#underline {
+  position: absolute;
+  bottom: 0;
+  height: 4px; /* lebih tebal sedikit */
+  background-color: #1D4ED8; /* biru */
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  width: 0;
+  left: 0;
+}

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('intern_batches', function (Blueprint $table) {
             $table->id();
             $table->string('name_intern_batches');
+            $table->string('slug_intern_batches')->unique();
             $table->text('description_intern_batches');
             $table->date('start_date_intern_batches');
             $table->date('end_date_intern_batches');
